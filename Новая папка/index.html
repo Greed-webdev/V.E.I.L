@@ -1,0 +1,960 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>V.E.I.L — Digital Architecture & Sales</title>
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <style>
+    :root {
+      --bg: #060606;
+      --card-bg: rgba(16, 16, 16, 0.85);
+      --accent: #c5a059;
+      --accent-light: #f7e096;
+      --text-main: #ffffff;
+      --text-muted: #8a8a8a;
+      --border: rgba(197, 160, 89, 0.2);
+      --border-hover: rgba(197, 160, 89, 0.6);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      background-color: var(--bg);
+      color: var(--text-main);
+      font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', Roboto, sans-serif;
+      overflow-x: hidden;
+      min-height: 100vh;
+    }
+
+    #canvas-container {
+      position: fixed;
+      top: 0;
+      right: -10%;
+      width: 70vw;
+      height: 100vh;
+      z-index: 1;
+      touch-action: none;
+    }
+
+    .preloader {
+      position: fixed;
+      inset: 0;
+      background: #000;
+      z-index: 999;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      transition: opacity 0.5s ease, visibility 0.5s ease;
+    }
+
+    .preloader-title {
+      font-size: 32px;
+      font-weight: 900;
+      letter-spacing: 12px;
+      color: var(--accent-light);
+      margin-bottom: 20px;
+    }
+
+    .preloader-bar {
+      width: 140px;
+      height: 2px;
+      background: #222;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .preloader-progress {
+      position: absolute;
+      top: 0; left: 0;
+      height: 100%;
+      width: 0%;
+      background: var(--accent);
+      animation: load 0.8s cubic-bezier(0.65, 0, 0.35, 1) forwards;
+    }
+
+    @keyframes load { to { width: 100%; } }
+    .preloader.hidden { opacity: 0; visibility: hidden; }
+
+    .wrapper {
+      position: relative;
+      z-index: 2;
+      width: 100%;
+      max-width: 1000px;
+      margin: 0 auto;
+      padding-bottom: 90px;
+    }
+
+    .navbar {
+      position: sticky;
+      top: 0;
+      background: rgba(6, 6, 6, 0.85);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      padding: 18px 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      z-index: 100;
+    }
+
+    .nav-brand {
+      font-size: 18px;
+      font-weight: 800;
+      letter-spacing: 4px;
+      color: var(--accent-light);
+      cursor: pointer;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 12px;
+    }
+
+    .nav-btn {
+      background: transparent;
+      border: 1px solid var(--border);
+      color: var(--text-muted);
+      padding: 6px 14px;
+      border-radius: 20px;
+      font-size: 11px;
+      letter-spacing: 1px;
+      cursor: pointer;
+      text-transform: uppercase;
+      transition: all 0.3s ease;
+    }
+
+    .nav-btn:hover, .nav-btn.active {
+      color: #fff;
+      border-color: var(--accent);
+      background: rgba(197, 160, 89, 0.1);
+    }
+
+    .page {
+      display: none;
+      animation: fadeIn 0.4s ease forwards;
+    }
+
+    .page.active { display: block; }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(12px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .hero {
+      padding: 50px 24px 30px 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .hero-tag {
+      font-size: 11px;
+      letter-spacing: 3px;
+      color: var(--accent);
+      text-transform: uppercase;
+    }
+
+    .hero-title {
+      font-size: clamp(38px, 7vw, 68px);
+      font-weight: 900;
+      line-height: 1.05;
+      background: linear-gradient(180deg, #ffffff 0%, #a0a0a0 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .hero-title span {
+      background: linear-gradient(135deg, #f7e096 0%, #c5a059 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .hero-desc {
+      font-size: 15px;
+      line-height: 1.6;
+      color: var(--text-muted);
+      max-width: 560px;
+    }
+
+    .section-title {
+      padding: 20px 24px 16px 24px;
+      font-size: 12px;
+      letter-spacing: 3px;
+      color: var(--accent);
+      text-transform: uppercase;
+    }
+
+    .sector-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      padding: 0 24px;
+    }
+
+    .sector-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      backdrop-filter: blur(12px);
+      border-radius: 18px;
+      padding: 22px 24px;
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      transition: all 0.3s ease;
+    }
+
+    .sector-card:hover {
+      border-color: var(--border-hover);
+      transform: translateY(-2px);
+      background: rgba(24, 24, 24, 0.95);
+    }
+
+    .sector-info {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .sector-num {
+      font-size: 11px;
+      color: var(--accent);
+      font-weight: 800;
+      letter-spacing: 2px;
+    }
+
+    .sector-name {
+      font-size: 19px;
+      font-weight: 700;
+      color: #ffffff;
+    }
+
+    .sector-sub {
+      font-size: 13px;
+      color: var(--text-muted);
+    }
+
+    .sector-arrow {
+      font-size: 20px;
+      color: var(--accent-light);
+    }
+
+    .page-header {
+      padding: 30px 24px 20px 24px;
+    }
+
+    .btn-back {
+      background: transparent;
+      border: 1px solid var(--border);
+      color: var(--accent-light);
+      padding: 8px 16px;
+      border-radius: 30px;
+      font-size: 11px;
+      font-weight: 700;
+      cursor: pointer;
+      margin-bottom: 20px;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .btn-back:hover {
+      background: var(--accent);
+      color: #000;
+    }
+
+    .page-main-title {
+      font-size: clamp(28px, 5vw, 44px);
+      font-weight: 900;
+      color: #fff;
+      margin-bottom: 8px;
+    }
+
+    .price-list {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      padding: 0 24px;
+    }
+
+    .price-item {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      backdrop-filter: blur(12px);
+      border-radius: 16px;
+      padding: 20px;
+    }
+
+    .price-item-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      margin-bottom: 8px;
+    }
+
+    .price-item-title {
+      font-size: 17px;
+      font-weight: 700;
+      color: #fff;
+    }
+
+    .price-tag {
+      font-size: 15px;
+      font-weight: 800;
+      color: var(--accent-light);
+      text-align: right;
+    }
+
+    .price-item-desc {
+      font-size: 13.5px;
+      color: var(--text-muted);
+      line-height: 1.5;
+    }
+
+    /* Компактная нижняя плашка */
+    .bottom-bar {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      background: rgba(6, 6, 6, 0.9);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      padding: 12px 24px;
+      border-top: 1px solid var(--border);
+      box-sizing: border-box;
+      z-index: 90;
+      display: flex;
+      justify-content: center;
+    }
+
+    .btn-agency {
+      max-width: 400px;
+      background: linear-gradient(135deg, #f7e096 0%, #c5a059 100%);
+      color: #000;
+      border: none;
+      border-radius: 24px;
+      padding: 12px 20px;
+      width: 100%;
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      cursor: pointer;
+      box-shadow: 0 4px 15px rgba(197, 160, 89, 0.2);
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .btn-agency:active {
+      transform: scale(0.98);
+    }
+
+    /* МОДАЛЬНОЕ ОКНО ЗАЯВКИ */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.75);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      z-index: 1000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.3s ease, visibility 0.3s ease;
+    }
+
+    .modal-overlay.active {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .modal-content {
+      background: #111111;
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 28px 24px;
+      width: 100%;
+      max-width: 420px;
+      position: relative;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.8);
+    }
+
+    .modal-close {
+      position: absolute;
+      top: 16px;
+      right: 18px;
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      font-size: 22px;
+      cursor: pointer;
+    }
+
+    .modal-title {
+      font-size: 20px;
+      font-weight: 800;
+      color: var(--accent-light);
+      margin-bottom: 6px;
+    }
+
+    .modal-sub {
+      font-size: 13px;
+      color: var(--text-muted);
+      margin-bottom: 20px;
+    }
+
+    .form-group {
+      margin-bottom: 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .form-label {
+      font-size: 11px;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: var(--text-muted);
+    }
+
+    .form-input {
+      background: #1a1a1a;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 10px;
+      padding: 12px 14px;
+      color: #fff;
+      font-size: 14px;
+      outline: none;
+      transition: border-color 0.3s ease;
+    }
+
+    .form-input:focus {
+      border-color: var(--accent);
+    }
+
+    .btn-submit {
+      width: 100%;
+      background: linear-gradient(135deg, #f7e096 0%, #c5a059 100%);
+      color: #000;
+      border: none;
+      border-radius: 12px;
+      padding: 14px;
+      font-size: 13px;
+      font-weight: 800;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      cursor: pointer;
+      margin-top: 10px;
+    }
+  </style>
+</head>
+<body>
+
+  <div id="canvas-container"></div>
+
+  <div class="preloader" id="preloader">
+    <div class="preloader-title">V.E.I.L</div>
+    <div class="preloader-bar"><div class="preloader-progress"></div></div>
+  </div>
+
+  <div class="wrapper">
+
+    <div class="navbar">
+      <div class="nav-brand" onclick="navigateTo('home')">V.E.I.L</div>
+      <div class="nav-links">
+        <button class="nav-btn" onclick="navigateTo('about')">О нас</button>
+        <button class="nav-btn" onclick="navigateTo('home')">Услуги</button>
+      </div>
+    </div>
+
+    <!-- 1. ГЛАВНАЯ СТРАНИЦА -->
+    <div id="home" class="page active">
+      <div class="hero">
+        <div class="hero-tag">Digital Architecture & Sales</div>
+        <div class="hero-title">WE BUILD <span>SYSTEMS.</span></div>
+        <div class="hero-desc">
+          Разработка веб-сервисов, TG-экосистем, автоматизация CRM и медиа-продвижение полного цикла.
+        </div>
+      </div>
+
+      <div class="section-title">// НАШИ НАПРАВЛЕНИЯ</div>
+
+      <div class="sector-grid">
+        <div class="sector-card" onclick="navigateTo('page-dev')">
+          <div class="sector-info">
+            <span class="sector-num">SECTOR // 01</span>
+            <span class="sector-name">Сайты, WebApp & TG-Боты</span>
+            <span class="sector-sub">Интернет-магазины, боты, лендинги и веб-платформы</span>
+          </div>
+          <div class="sector-arrow">→</div>
+        </div>
+
+        <div class="sector-card" onclick="navigateTo('page-crm')">
+          <div class="sector-info">
+            <span class="sector-num">SECTOR // 02</span>
+            <span class="sector-name">CRM & Воронки Продаж</span>
+            <span class="sector-sub">Аудит, логика воронок и квизы под ключ</span>
+          </div>
+          <div class="sector-arrow">→</div>
+        </div>
+
+        <div class="sector-card" onclick="navigateTo('page-promo')">
+          <div class="sector-info">
+            <span class="sector-num">SECTOR // 03</span>
+            <span class="sector-name">Консалтинг & Продвижение</span>
+            <span class="sector-sub">Личный бренд, аудит, стратегические созвоны</span>
+          </div>
+          <div class="sector-arrow">→</div>
+        </div>
+
+        <div class="sector-card" onclick="navigateTo('page-media')">
+          <div class="sector-info">
+            <span class="sector-num">SECTOR // 04</span>
+            <span class="sector-name">Видеомонтаж & Медиа</span>
+            <span class="sector-sub">Рилсы, спецэффекты и динамический контент</span>
+          </div>
+          <div class="sector-arrow">→</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 2. СЕКТОР 01 (РАЗРАБОТКА) -->
+    <div id="page-dev" class="page">
+      <div class="page-header">
+        <button class="btn-back" onclick="navigateTo('home')">← НАЗАД</button>
+        <div class="sector-num">SECTOR // 01</div>
+        <h1 class="page-main-title">Разработка Сайтов & Ботов</h1>
+      </div>
+
+      <div class="price-list">
+        <div class="price-item">
+          <div class="price-item-header">
+            <span class="price-item-title">Telegram-боты (Базовые)</span>
+            <span class="price-tag" data-base-usd-min="100" data-base-usd-max="200">Загрузка...</span>
+          </div>
+          <div class="price-item-desc">Разработка простеньких ботов под задачи бизнеса. Сроки: от 1 до 2 дней.</div>
+        </div>
+
+        <div class="price-item">
+          <div class="price-item-header">
+            <span class="price-item-title">TG-Магазины & WebApp Сектор</span>
+            <span class="price-tag" data-base-usd-min="250" data-base-usd-max="1200">Загрузка...</span>
+          </div>
+          <div class="price-item-desc">Полноценные магазины внутри Telegram с кастомной админкой, рассылками, интеграциями (МойСклад) и приемом оплаты. Сроки: 5–7 дней.</div>
+        </div>
+
+        <div class="price-item">
+          <div class="price-item-header">
+            <span class="price-item-title">Лендинг Страницы</span>
+            <span class="price-tag" data-base-usd-single="250">Загрузка...</span>
+          </div>
+          <div class="price-item-desc">Конверсионные одностраничные сайты под ключ. Быстрый запуск за 1 день.</div>
+        </div>
+
+        <div class="price-item">
+          <div class="price-item-header">
+            <span class="price-item-title">Веб-Сайты (Легкий / Средний / Сложный)</span>
+            <span class="price-tag" data-base-usd-min="400" data-base-usd-max="700">Загрузка...</span>
+          </div>
+          <div class="price-item-desc">Легкий ($400), Средний ($550), Сложный ($700).</div>
+        </div>
+
+        <div class="price-item">
+          <div class="price-item-header">
+            <span class="price-item-title">Многостраничные сайты (6+ страниц)</span>
+            <span class="price-tag" data-base-usd-single="900">Загрузка...</span>
+          </div>
+          <div class="price-item-desc">Полноценные экосистемы и сложные веб-платформы.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 3. СЕКТОР 02 (CRM) -->
+    <div id="page-crm" class="page">
+      <div class="page-header">
+        <button class="btn-back" onclick="navigateTo('home')">← НАЗАД</button>
+        <div class="sector-num">SECTOR // 02</div>
+        <h1 class="page-main-title">CRM & Воронки Продаж</h1>
+      </div>
+
+      <div class="price-list">
+        <div class="price-item">
+          <div class="price-item-header">
+            <span class="price-item-title">CRM-Аудит (Быстрый вход)</span>
+            <span class="price-tag" data-base-usd-min="120" data-base-usd-max="180">Загрузка...</span>
+          </div>
+          <div class="price-item-desc">Быстрый разбор текущих систем и поиск точек потери клиентов.</div>
+        </div>
+
+        <div class="price-item">
+          <div class="price-item-header">
+            <span class="price-item-title">CRM-Воронка + Настройка логики</span>
+            <span class="price-tag" data-base-usd-min="430" data-base-usd-max="550">Загрузка...</span>
+          </div>
+          <div class="price-item-desc">Сборка логики продаж, связка каналов и автоматизация движения лида.</div>
+        </div>
+
+        <div class="price-item">
+          <div class="price-item-header">
+            <span class="price-item-title">Квиз + WebApp / Бот записи</span>
+            <span class="price-tag" data-base-usd-min="600" data-base-usd-max="850">Загрузка...</span>
+          </div>
+          <div class="price-item-desc">Разработка интерактивного квиза с интеграцией слотов, бронирования и сертификатов.</div>
+        </div>
+
+        <div class="price-item">
+          <div class="price-item-header">
+            <span class="price-item-title">Полный комплекс Под Ключ</span>
+            <span class="price-tag" data-base-usd-single="1050">Загрузка...</span>
+          </div>
+          <div class="price-item-desc">Комплексное внедрение инфраструктуры продаж V.E.I.L.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 4. СЕКТОР 03 (ПРОДВИЖЕНИЕ) -->
+    <div id="page-promo" class="page">
+      <div class="page-header">
+        <button class="btn-back" onclick="navigateTo('home')">← НАЗАД</button>
+        <div class="sector-num">SECTOR // 03</div>
+        <h1 class="page-main-title">Консалтинг & Продвижение</h1>
+      </div>
+
+      <div class="price-list">
+        <div class="price-item">
+          <div class="price-item-header">
+            <span class="price-item-title">Созвон №1 (Консультация & Брифинг)</span>
+            <span class="price-tag" data-base-usd-min="15" data-base-usd-max="20">Загрузка...</span>
+          </div>
+          <div class="price-item-desc">Разбор ниши, контента, план-стратегия на первый месяц (до 40-60 минут).</div>
+        </div>
+
+        <div class="price-item">
+          <div class="price-item-header">
+            <span class="price-item-title">Созвон №2 (Упаковка & Стратегия)</span>
+            <span class="price-tag" data-base-usd-min="100" data-base-usd-max="430">Загрузка...</span>
+          </div>
+          <div class="price-item-desc">Глубокий разбор слабых мест, личный бренд, архетипы. Работа профильных подрядчиков входит в стоимость.</div>
+        </div>
+
+        <div class="price-item">
+          <div class="price-item-header">
+            <span class="price-item-title">Ведение & Продвижение (Месяц)</span>
+            <span class="price-tag" data-base-usd-min="185" data-base-usd-max="370">Загрузка...</span>
+          </div>
+          <div class="price-item-desc">Легкий режим ($185), Активная монетизация ($245), Полноценный менеджмент с выходом на бренды ($370).</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 5. СЕКТОР 04 (МОНТАЖ) -->
+    <div id="page-media" class="page">
+      <div class="page-header">
+        <button class="btn-back" onclick="navigateTo('home')">← НАЗАД</button>
+        <div class="sector-num">SECTOR // 04</div>
+        <h1 class="page-main-title">Видеомонтаж & Медиа</h1>
+      </div>
+
+      <div class="price-list">
+        <div class="price-item">
+          <div class="price-item-header">
+            <span class="price-item-title">Легкий монтаж</span>
+            <span class="price-tag" data-base-usd-min="10" data-base-usd-max="20">Загрузка...</span>
+          </div>
+          <div class="price-item-desc">Базовый монтаж по легким ТЗ. Сроки: 1-1.5 часа.</div>
+        </div>
+
+        <div class="price-item">
+          <div class="price-item-header">
+            <span class="price-item-title">Средняя сложность</span>
+            <span class="price-tag" data-base-usd-min="25" data-base-usd-max="40">Загрузка...</span>
+          </div>
+          <div class="price-item-desc">Спецэффекты, динамичный текст, обработка звука. Сроки: 2-3 часа.</div>
+        </div>
+
+        <div class="price-item">
+          <div class="price-item-header">
+            <span class="price-item-title">Сложная работа / VFX</span>
+            <span class="price-tag" data-base-usd-min="50" data-base-usd-max="100">Загрузка...</span>
+          </div>
+          <div class="price-item-desc">Полный цветокор, комплексные спецэффекты, саунд-дизайн.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 6. О НАC -->
+    <div id="about" class="page">
+      <div class="page-header">
+        <button class="btn-back" onclick="navigateTo('home')">← НАЗАД</button>
+        <div class="sector-num">// ARCHITECTURE & VISION</div>
+        <h1 class="page-main-title">О компании V.E.I.L</h1>
+      </div>
+
+      <div class="price-list">
+        <div class="price-item">
+          <div class="price-item-header">
+            <span class="price-item-title">Наша философия</span>
+          </div>
+          <div class="price-item-desc">
+            V.E.I.L — команда цифровых архитекторов. Мы объединяем веб-разработку, автоматизацию продающих воронок и креативное медиа-продвижение в единую рабочую систему.
+          </div>
+        </div>
+
+        <div class="price-item">
+          <div class="price-item-header">
+            <span class="price-item-title">Стандарты работы</span>
+          </div>
+          <div class="price-item-desc">
+            Мы не используем шаблонные решения. Каждая CRM-система, бот или видеоконтент собираются с привязкой к конкретным финансовым метрикам клиента.
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Нижняя плашка -->
+  <div class="bottom-bar">
+    <button class="btn-agency" onclick="openModal()">Связаться с V.E.I.L</button>
+  </div>
+
+  <!-- Модальное окно формы -->
+  <div class="modal-overlay" id="contactModal">
+    <div class="modal-content">
+      <button class="modal-close" onclick="closeModal()">×</button>
+      <div class="modal-title">Заявка в V.E.I.L</div>
+      <div class="modal-sub">Оставьте контакты для расчета вашего проекта</div>
+
+      <form id="contactForm" onsubmit="submitForm(event)">
+        <div class="form-group">
+          <label class="form-label">Username / Имя</label>
+          <input type="text" id="formUsername" class="form-input" placeholder="@username или Имя" required>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Email</label>
+          <input type="email" id="formEmail" class="form-input" placeholder="example@mail.com" required>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Телефон</label>
+          <input type="tel" id="formPhone" class="form-input" placeholder="+7 (999) 000-00-00" required>
+        </div>
+
+        <button type="submit" class="btn-submit">Отправить заявку</button>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    // Гарантированное скрытие прелоадера
+    function hidePreloader() {
+      const preloader = document.getElementById('preloader');
+      if (preloader && !preloader.classList.contains('hidden')) {
+        preloader.classList.add('hidden');
+      }
+    }
+
+    // Запасной таймер: скрываем прелоадер через 1 секунду в любом случае
+    setTimeout(hidePreloader, 1000);
+
+    window.addEventListener('DOMContentLoaded', () => {
+      initCurrencyConverter();
+      initTelegramUserData();
+    });
+
+    window.addEventListener('load', () => {
+      hidePreloader();
+    });
+
+    // Автоподстановка Telegram Юзернейма
+    function initTelegramUserData() {
+      try {
+        if (window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.initDataUnsafe) {
+          const user = window.Telegram.WebApp.initDataUnsafe.user;
+          if (user) {
+            const usernameInput = document.getElementById('formUsername');
+            if (user.username) {
+              usernameInput.value = '@' + user.username;
+            } else if (user.first_name) {
+              usernameInput.value = user.first_name + (user.last_name ? ' ' + user.last_name : '');
+            }
+          }
+        }
+      } catch (e) {
+        console.log('TG Data bypass:', e);
+      }
+    }
+
+    // Управление модальным окном
+    function openModal() {
+      document.getElementById('contactModal').classList.add('active');
+    }
+
+    function closeModal() {
+      document.getElementById('contactModal').classList.remove('active');
+    }
+
+    // Обработка отправки формы
+    function submitForm(event) {
+      event.preventDefault();
+      const username = document.getElementById('formUsername').value;
+      const email = document.getElementById('formEmail').value;
+      const phone = document.getElementById('formPhone').value;
+
+      const payload = { username, email, phone };
+
+      if (window.Telegram && window.Telegram.WebApp) {
+        window.Telegram.WebApp.sendData(JSON.stringify(payload));
+      } else {
+        alert('Заявка отправлена!\n' + JSON.stringify(payload, null, 2));
+      }
+
+      closeModal();
+    }
+
+    async function initCurrencyConverter() {
+      let usdRate = 81.08;
+
+      try {
+        const response = await fetch('https://open.er-api.com/v6/latest/USD');
+        const data = await response.json();
+        if (data && data.rates && data.rates.RUB) {
+          usdRate = data.rates.RUB;
+        }
+      } catch (e) {
+        console.warn('API курса недоступно, используется резервный курс');
+      }
+
+      const formatRub = (num) => Math.round(num).toLocaleString('ru-RU') + ' ₽';
+      const formatUsd = (num) => '$' + Math.round(num).toLocaleString('en-US');
+
+      document.querySelectorAll('.price-tag').forEach(tag => {
+        if (tag.dataset.baseUsdMin && tag.dataset.baseUsdMax) {
+          const min = parseFloat(tag.dataset.baseUsdMin);
+          const max = parseFloat(tag.dataset.baseUsdMax);
+          tag.textContent = `${formatUsd(min)} – ${formatUsd(max)} / ${formatRub(min * usdRate)} – ${formatRub(max * usdRate)}`;
+        } 
+        else if (tag.dataset.baseUsdSingle) {
+          const val = parseFloat(tag.dataset.baseUsdSingle);
+          tag.textContent = `${formatUsd(val)} / ${formatRub(val * usdRate)}`;
+        }
+      });
+    }
+
+    if (window.Telegram && window.Telegram.WebApp) {
+      try {
+        const tg = window.Telegram.WebApp;
+        tg.ready();
+        tg.expand();
+      } catch (e) {
+        console.log('TG WebApp ready bypass');
+      }
+    }
+
+    function navigateTo(pageId) {
+      document.querySelectorAll('.page').forEach(page => page.classList.remove('active'));
+      const targetPage = document.getElementById(pageId);
+      if (targetPage) {
+        targetPage.classList.add('active');
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+      document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active'));
+    }
+
+    // Безопасная инициализация Three.js для iOS
+    function initThreeJS() {
+      try {
+        const container = document.getElementById('canvas-container');
+        if (!container || typeof THREE === 'undefined') return;
+
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(75, container.clientWidth / container.clientHeight, 0.1, 1000);
+        camera.position.z = 350;
+
+        const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true, failIfMajorPerformanceCaveat: false });
+        renderer.setSize(container.clientWidth, container.clientHeight);
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+        container.appendChild(renderer.domElement);
+
+        const geometry = new THREE.IcosahedronGeometry(170, 3);
+        const material = new THREE.PointsMaterial({
+          color: 0xc5a059,
+          size: 2.2,
+          transparent: true,
+          opacity: 0.5
+        });
+        const sphere = new THREE.Points(geometry, material);
+        scene.add(sphere);
+
+        let isDragging = false;
+        let previousMousePosition = { x: 0, y: 0 };
+
+        const onPointerDown = (e) => {
+          isDragging = true;
+          previousMousePosition = {
+            x: e.clientX || (e.touches && e.touches[0].clientX),
+            y: e.clientY || (e.touches && e.touches[0].clientY)
+          };
+        };
+
+        const onPointerMove = (e) => {
+          if (!isDragging) return;
+          const currentX = e.clientX || (e.touches && e.touches[0].clientX);
+          const currentY = e.clientY || (e.touches && e.touches[0].clientY);
+          
+          const deltaX = currentX - previousMousePosition.x;
+          const deltaY = currentY - previousMousePosition.y;
+
+          sphere.rotation.y += deltaX * 0.005;
+          sphere.rotation.x += deltaY * 0.005;
+
+          previousMousePosition = { x: currentX, y: currentY };
+        };
+
+        const onPointerUp = () => { isDragging = false; };
+
+        container.addEventListener('mousedown', onPointerDown);
+        container.addEventListener('mousemove', onPointerMove);
+        window.addEventListener('mouseup', onPointerUp);
+
+        container.addEventListener('touchstart', onPointerDown, { passive: true });
+        container.addEventListener('touchmove', onPointerMove, { passive: true });
+        window.addEventListener('touchend', onPointerUp);
+
+        function animate() {
+          requestAnimationFrame(animate);
+          if (!isDragging) {
+            sphere.rotation.y += 0.0006;
+          }
+          renderer.render(scene, camera);
+        }
+        animate();
+
+        window.addEventListener('resize', () => {
+          camera.aspect = container.clientWidth / container.clientHeight;
+          camera.updateProjectionMatrix();
+          renderer.setSize(container.clientWidth, container.clientHeight);
+        });
+      } catch (e) {
+        console.log('WebGL error bypass on iOS:', e);
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', initThreeJS);
+  </script>
+</body>
+</html>
