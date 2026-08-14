@@ -351,113 +351,15 @@
       letter-spacing: 1.5px;
       text-transform: uppercase;
       cursor: pointer;
+      text-decoration: none;
+      text-align: center;
+      display: inline-block;
       box-shadow: 0 4px 15px rgba(197, 160, 89, 0.2);
       transition: transform 0.2s ease, box-shadow 0.2s ease;
     }
 
     .btn-agency:active {
       transform: scale(0.98);
-    }
-
-    /* МОДАЛЬНОЕ ОКНО ЗАЯВКИ */
-    .modal-overlay {
-      position: fixed;
-      inset: 0;
-      background: rgba(0, 0, 0, 0.75);
-      backdrop-filter: blur(10px);
-      -webkit-backdrop-filter: blur(10px);
-      z-index: 1000;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 20px;
-      opacity: 0;
-      visibility: hidden;
-      transition: opacity 0.3s ease, visibility 0.3s ease;
-    }
-
-    .modal-overlay.active {
-      opacity: 1;
-      visibility: visible;
-    }
-
-    .modal-content {
-      background: #111111;
-      border: 1px solid var(--border);
-      border-radius: 20px;
-      padding: 28px 24px;
-      width: 100%;
-      max-width: 420px;
-      position: relative;
-      box-shadow: 0 10px 40px rgba(0,0,0,0.8);
-    }
-
-    .modal-close {
-      position: absolute;
-      top: 16px;
-      right: 18px;
-      background: transparent;
-      border: none;
-      color: var(--text-muted);
-      font-size: 22px;
-      cursor: pointer;
-    }
-
-    .modal-title {
-      font-size: 20px;
-      font-weight: 800;
-      color: var(--accent-light);
-      margin-bottom: 6px;
-    }
-
-    .modal-sub {
-      font-size: 13px;
-      color: var(--text-muted);
-      margin-bottom: 20px;
-    }
-
-    .form-group {
-      margin-bottom: 14px;
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
-    }
-
-    .form-label {
-      font-size: 11px;
-      letter-spacing: 1px;
-      text-transform: uppercase;
-      color: var(--text-muted);
-    }
-
-    .form-input {
-      background: #1a1a1a;
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      border-radius: 10px;
-      padding: 12px 14px;
-      color: #fff;
-      font-size: 14px;
-      outline: none;
-      transition: border-color 0.3s ease;
-    }
-
-    .form-input:focus {
-      border-color: var(--accent);
-    }
-
-    .btn-submit {
-      width: 100%;
-      background: linear-gradient(135deg, #f7e096 0%, #c5a059 100%);
-      color: #000;
-      border: none;
-      border-radius: 12px;
-      padding: 14px;
-      font-size: 13px;
-      font-weight: 800;
-      letter-spacing: 1.5px;
-      text-transform: uppercase;
-      cursor: pointer;
-      margin-top: 10px;
     }
   </style>
 </head>
@@ -728,35 +630,7 @@
 
   <!-- Нижняя плашка -->
   <div class="bottom-bar">
-    <button class="btn-agency" onclick="openModal()">Связаться с V.E.I.L</button>
-  </div>
-
-  <!-- Модальное окно формы -->
-  <div class="modal-overlay" id="contactModal">
-    <div class="modal-content">
-      <button class="modal-close" onclick="closeModal()">×</button>
-      <div class="modal-title">Заявка в V.E.I.L</div>
-      <div class="modal-sub">Оставьте контакты для расчета вашего проекта</div>
-
-      <form id="contactForm" onsubmit="submitForm(event)">
-        <div class="form-group">
-          <label class="form-label">Username / Имя</label>
-          <input type="text" id="formUsername" class="form-input" placeholder="@username или Имя" required>
-        </div>
-
-        <div class="form-group">
-          <label class="form-label">Email</label>
-          <input type="email" id="formEmail" class="form-input" placeholder="example@mail.com" required>
-        </div>
-
-        <div class="form-group">
-          <label class="form-label">Телефон</label>
-          <input type="tel" id="formPhone" class="form-input" placeholder="+7 (999) 000-00-00" required>
-        </div>
-
-        <button type="submit" class="btn-submit">Отправить заявку</button>
-      </form>
-    </div>
+    <a href="https://t.me/Iskandertay" target="_blank" class="btn-agency">Связаться с V.E.I.L</a>
   </div>
 
   <script>
@@ -773,58 +647,11 @@
 
     window.addEventListener('DOMContentLoaded', () => {
       initCurrencyConverter();
-      initTelegramUserData();
     });
 
     window.addEventListener('load', () => {
       hidePreloader();
     });
-
-    // Автоподстановка Telegram Юзернейма
-    function initTelegramUserData() {
-      try {
-        if (window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.initDataUnsafe) {
-          const user = window.Telegram.WebApp.initDataUnsafe.user;
-          if (user) {
-            const usernameInput = document.getElementById('formUsername');
-            if (user.username) {
-              usernameInput.value = '@' + user.username;
-            } else if (user.first_name) {
-              usernameInput.value = user.first_name + (user.last_name ? ' ' + user.last_name : '');
-            }
-          }
-        }
-      } catch (e) {
-        console.log('TG Data bypass:', e);
-      }
-    }
-
-    // Управление модальным окном
-    function openModal() {
-      document.getElementById('contactModal').classList.add('active');
-    }
-
-    function closeModal() {
-      document.getElementById('contactModal').classList.remove('active');
-    }
-
-    // Обработка отправки формы
-    function submitForm(event) {
-      event.preventDefault();
-      const username = document.getElementById('formUsername').value;
-      const email = document.getElementById('formEmail').value;
-      const phone = document.getElementById('formPhone').value;
-
-      const payload = { username, email, phone };
-
-      if (window.Telegram && window.Telegram.WebApp) {
-        window.Telegram.WebApp.sendData(JSON.stringify(payload));
-      } else {
-        alert('Заявка отправлена!\n' + JSON.stringify(payload, null, 2));
-      }
-
-      closeModal();
-    }
 
     async function initCurrencyConverter() {
       let usdRate = 81.08;
