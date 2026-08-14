@@ -377,6 +377,7 @@
     <div class="navbar">
       <div class="nav-brand" onclick="navigateTo('home')">V.E.I.L</div>
       <div class="nav-links">
+        <button class="nav-btn" onclick="scrollToPortfolio()">Портфолио</button>
         <button class="nav-btn" onclick="navigateTo('about')">О нас</button>
         <button class="nav-btn" onclick="navigateTo('home')">Услуги</button>
       </div>
@@ -430,6 +431,156 @@
           </div>
           <div class="sector-arrow">→</div>
         </div>
+      </div>
+
+      <!-- === БЛОК ПОРТФОЛИО === -->
+      <div class="section-title" id="portfolio-section" style="margin-top: 30px;">// ПОРТФОЛИО & КЕЙСЫ</div>
+      <p style="padding: 0 24px 20px 24px; font-size: 13.5px; color: var(--text-muted); line-height: 1.5;">
+        Действующие цифровые архитектуры. Кликните по карточке или кнопке для перехода на живой сайт.
+      </p>
+
+      <div class="portfolio-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; padding: 0 24px;">
+        
+        <!-- Карточка 1: Slab River -->
+        <article class="portfolio-card" style="background: var(--card-bg); border: 1px solid var(--border); border-radius: 18px; overflow: hidden; backdrop-filter: blur(12px); transition: all 0.3s ease;">
+          
+          <!-- Шапка браузера с интерактивным адресом -->
+          <div style="height: 36px; background: rgba(0,0,0,0.6); display: flex; align-items: center; padding: 0 12px; gap: 8px; border-bottom: 1px solid rgba(255,255,255,0.08);">
+            <div style="display: flex; gap: 5px;">
+              <span style="width: 10px; height: 10px; background: #ff5f56; border-radius: 50%;"></span>
+              <span style="width: 10px; height: 10px; background: #ffbd2e; border-radius: 50%;"></span>
+              <span style="width: 10px; height: 10px; background: #27c93f; border-radius: 50%;"></span>
+            </div>
+            <a href="https://slab-river.vercel.app/" target="_blank" rel="noopener noreferrer" style="margin-left: auto; font-size: 0.75rem; color: #e5c158; font-family: monospace; text-decoration: none; background: rgba(229, 193, 88, 0.1); padding: 3px 8px; border-radius: 4px; border: 1px solid rgba(229, 193, 88, 0.2);">
+              https://slab-river.vercel.app ↗
+            </a>
+          </div>
+
+          <!-- Баннер-ссылка -->
+          <a href="https://slab-river.vercel.app/" target="_blank" rel="noopener noreferrer" style="display: block; position: relative; width: 100%; height: 160px; background: linear-gradient(135deg, #0f1115 0%, #1a1f29 50%, #08090c 100%); text-decoration: none;">
+            <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; padding: 20px; text-align: center;">
+              <div style="font-size: 1.3rem; font-weight: 800; color: #e5c158; letter-spacing: 2px; margin-bottom: 6px;">SLAB RIVER</div>
+              <div style="font-size: 0.8rem; color: #aaa; max-width: 85%;">Авторская мебель и изделия из массива дерева и эпоксидной смолы</div>
+            </div>
+          </a>
+
+          <div class="card-content" style="padding: 20px;">
+            <h3 style="font-size: 1.15rem; margin: 0 0 10px 0; color: #fff; font-weight: 700;">Slab River — Premium Wood Landing</h3>
+            <p style="font-size: 0.85rem; color: var(--text-muted); line-height: 1.5; margin-bottom: 16px;">
+              Высококонверсионный лендинг для столярной мастерской премиум-сегмента. Оптимизирован под демонстрацию премиальных текстур и быстрый расчет индивидуальных заказов.
+            </p>
+
+            <!-- Кнопка действия -->
+            <div style="margin-bottom: 16px;">
+              <a href="https://slab-river.vercel.app/" target="_blank" rel="noopener noreferrer" style="display: inline-flex; align-items: center; justify-content: center; gap: 8px; width: 100%; padding: 10px 16px; background: linear-gradient(135deg, #f7e096 0%, #c5a059 100%); color: #000; font-weight: 700; font-size: 0.85rem; border-radius: 10px; text-decoration: none; transition: opacity 0.2s ease;">
+                <span>Перейти на сайт</span>
+                <span>↗</span>
+              </a>
+            </div>
+
+            <!-- Раскрывающиеся списки -->
+            <details style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); border-radius: 8px; overflow: hidden; margin-bottom: 10px;">
+              <summary style="padding: 10px 14px; cursor: pointer; font-size: 0.82rem; font-weight: 600; color: #d1d5db; user-select: none; display: flex; justify-content: space-between; align-items: center;">
+                <span>Архитектура и преимущества</span>
+                <span style="color: #e5c158;">▼</span>
+              </summary>
+              <div style="padding: 12px 14px; border-top: 1px solid rgba(255,255,255,0.05); font-size: 0.8rem; color: #9ca3af; line-height: 1.6;">
+                <ul style="padding-left: 16px; margin: 0;">
+                  <li><strong>UX/UI под премиум-сегмент:</strong> Тёмный контрастный интерфейс, подчеркивающий фактуру натурального дерева.</li>
+                  <li><strong>Высокая скорость:</strong> Чистый фронтенд без громоздких библиотек для мгновенного рендеринга.</li>
+                  <li><strong>Конверсионные блоки:</strong> Форма подбора размеров с возможностью быстрой отправки заявки.</li>
+                  <li><strong>Mobile First:</strong> Полная адаптация UI под любые мобильные разрешения.</li>
+                </ul>
+              </div>
+            </details>
+
+            <details style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); border-radius: 8px; overflow: hidden;">
+              <summary style="padding: 10px 14px; cursor: pointer; font-size: 0.82rem; font-weight: 600; color: #d1d5db; user-select: none; display: flex; justify-content: space-between; align-items: center;">
+                <span>Этапы реализации</span>
+                <span style="color: #e5c158;">▼</span>
+              </summary>
+              <div style="padding: 12px 14px; border-top: 1px solid rgba(255,255,255,0.05); font-size: 0.8rem; color: #9ca3af; line-height: 1.6;">
+                <ol style="padding-left: 16px; margin: 0;">
+                  <li>Анализ ниши авторской мебели и проектирование пути клиента.</li>
+                  <li>Проработка структуры, сборка макета и акцентных блоков.</li>
+                  <li>Верстка адаптивного интерфейса и подключение обработчиков.</li>
+                  <li>Публикация и настройка CDN-серверов на Vercel.</li>
+                </ol>
+              </div>
+            </details>
+          </div>
+        </article>
+
+        <!-- Карточка 2: Forest Hotels -->
+        <article class="portfolio-card" style="background: var(--card-bg); border: 1px solid var(--border); border-radius: 18px; overflow: hidden; backdrop-filter: blur(12px); transition: all 0.3s ease;">
+          
+          <!-- Шапка браузера с интерактивным адресом -->
+          <div style="height: 36px; background: rgba(0,0,0,0.6); display: flex; align-items: center; padding: 0 12px; gap: 8px; border-bottom: 1px solid rgba(255,255,255,0.08);">
+            <div style="display: flex; gap: 5px;">
+              <span style="width: 10px; height: 10px; background: #ff5f56; border-radius: 50%;"></span>
+              <span style="width: 10px; height: 10px; background: #ffbd2e; border-radius: 50%;"></span>
+              <span style="width: 10px; height: 10px; background: #27c93f; border-radius: 50%;"></span>
+            </div>
+            <a href="https://forest-hotels.vercel.app/" target="_blank" rel="noopener noreferrer" style="margin-left: auto; font-size: 0.75rem; color: #4ade80; font-family: monospace; text-decoration: none; background: rgba(74, 222, 128, 0.1); padding: 3px 8px; border-radius: 4px; border: 1px solid rgba(74, 222, 128, 0.2);">
+              https://forest-hotels.vercel.app ↗
+            </a>
+          </div>
+
+          <!-- Баннер-ссылка -->
+          <a href="https://forest-hotels.vercel.app/" target="_blank" rel="noopener noreferrer" style="display: block; position: relative; width: 100%; height: 160px; background: linear-gradient(135deg, #0a140f 0%, #12241b 50%, #050a07 100%); text-decoration: none;">
+            <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; padding: 20px; text-align: center;">
+              <div style="font-size: 1.3rem; font-weight: 800; color: #4ade80; letter-spacing: 2px; margin-bottom: 6px;">FOREST HOTELS</div>
+              <div style="font-size: 0.8rem; color: #aaa; max-width: 85%;">Сеть загородных отелей и эко-комплексов для отдыха</div>
+            </div>
+          </a>
+
+          <div class="card-content" style="padding: 20px;">
+            <h3 style="font-size: 1.15rem; margin: 0 0 10px 0; color: #fff; font-weight: 700;">Forest Hotels — Resort Booking System</h3>
+            <p style="font-size: 0.85rem; color: var(--text-muted); line-height: 1.5; margin-bottom: 16px;">
+              Современный веб-интерфейс для подбора и бронирования эко-отелей. Структурированная подача инфраструктуры, номеров и загородных сервисов.
+            </p>
+
+            <!-- Кнопка действия -->
+            <div style="margin-bottom: 16px;">
+              <a href="https://forest-hotels.vercel.app/" target="_blank" rel="noopener noreferrer" style="display: inline-flex; align-items: center; justify-content: center; gap: 8px; width: 100%; padding: 10px 16px; background: #4ade80; color: #000; font-weight: 700; font-size: 0.85rem; border-radius: 10px; text-decoration: none; transition: opacity 0.2s ease;">
+                <span>Перейти на сайт</span>
+                <span>↗</span>
+              </a>
+            </div>
+
+            <!-- Раскрывающиеся списки -->
+            <details style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); border-radius: 8px; overflow: hidden; margin-bottom: 10px;">
+              <summary style="padding: 10px 14px; cursor: pointer; font-size: 0.82rem; font-weight: 600; color: #d1d5db; user-select: none; display: flex; justify-content: space-between; align-items: center;">
+                <span>Функционал и преимущества</span>
+                <span style="color: #4ade80;">▼</span>
+              </summary>
+              <div style="padding: 12px 14px; border-top: 1px solid rgba(255,255,255,0.05); font-size: 0.8rem; color: #9ca3af; line-height: 1.6;">
+                <ul style="padding-left: 16px; margin: 0;">
+                  <li><strong>Каталог вариантов:</strong> Удобная фильтрация по типам размещения (глэмпинги, коттеджи, спа-отели).</li>
+                  <li><strong>Интерактивные карты/зоны:</strong> Наглядная презентация территории и сервисов комплекса.</li>
+                  <li><strong>Готовность к CRM:</strong> Архитектура подготовлена под подключение систем бронирования и модулей оплаты.</li>
+                  <li><strong>Адаптивный дизайн:</strong> Безупречная работа интерфейса на всех мобильных платформах.</li>
+                </ul>
+              </div>
+            </details>
+
+            <details style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); border-radius: 8px; overflow: hidden;">
+              <summary style="padding: 10px 14px; cursor: pointer; font-size: 0.82rem; font-weight: 600; color: #d1d5db; user-select: none; display: flex; justify-content: space-between; align-items: center;">
+                <span>Этапы реализации</span>
+                <span style="color: #4ade80;">▼</span>
+              </summary>
+              <div style="padding: 12px 14px; border-top: 1px solid rgba(255,255,255,0.05); font-size: 0.8rem; color: #9ca3af; line-height: 1.6;">
+                <ol style="padding-left: 16px; margin: 0;">
+                  <li>Проектирование логики вывода каталога и выборки вариантов.</li>
+                  <li>Сборка UI-компонентов в экостиле с тёмной цветовой гаммой.</li>
+                  <li>Оптимизация производительности и проверка кроссбраузерности.</li>
+                  <li>Деплой и хостинг статических файлов на Vercel.</li>
+                </ol>
+              </div>
+            </details>
+          </div>
+        </article>
+
       </div>
     </div>
 
@@ -700,6 +851,16 @@
         window.scrollTo({ top: 0, behavior: 'smooth' });
       }
       document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active'));
+    }
+
+    function scrollToPortfolio() {
+      navigateTo('home');
+      setTimeout(() => {
+        const el = document.getElementById('portfolio-section');
+        if (el) {
+          el.scrollIntoView({ behavior: 'smooth' });
+        }
+      }, 50);
     }
 
     // Безопасная инициализация Three.js для iOS
